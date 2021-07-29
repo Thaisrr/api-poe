@@ -11,6 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Character.hasOne(models.Bag, {
+        foreignKey: 'characterId',
+        as: 'bag',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+      })
+
+
     }
   };
   Character.init({
@@ -23,3 +31,10 @@ module.exports = (sequelize, DataTypes) => {
   });
   return Character;
 };
+
+/*
+Reprendre le projet d'exercice :
+- Créer son controller avec CRUD
+- Ajouter une adresse : un user peut avoir une adresse
+( numero, rue, code postal, ville )
+ */

@@ -24,9 +24,25 @@ class CharacterController {
         res.json(data);
     }
 
-    update = () => {}
+    update = async (req, res) => {
+        const id = req.params.id;
+        const char = await Character.findByPk(id);
+        const updated_character = {
+            name : req.body.name || char.name,
+            xp : req.body.xp || char.xp,
+            pv :req.body.pv || char.pv
+        }
+        const data = await Character.update(updated_character, { where: {id: id}});
+        res.json(data);
+    }
 
-    delete = () => {}
+    delete = async (req, res) => {
+        const id = req.params.id;
+        const data = await Character.destroy({
+            where: {id: id}
+        });
+        res.json(data);
+    }
 }
 
 module.exports = new CharacterController();
