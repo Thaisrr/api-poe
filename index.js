@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 3001;
+const port = 3000;
 const CharacterController = require('./controllers/character-controller')
 
 /* lit les application-content json + body parser */
