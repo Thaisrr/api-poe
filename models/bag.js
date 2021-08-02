@@ -11,6 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Bag.belongsTo(models.Character, {
+        foreignKey: 'characterId',
+        as: 'bag',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+      })
     }
   };
   Bag.init({

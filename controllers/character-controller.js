@@ -19,7 +19,15 @@ class CharacterController {
 
     getOne = async (req, res) => {
         const id = req.params.id;
-        const data = await Character.findByPk(id);
+        const data = await Character.findByPk(id, {
+            include: [
+                {
+                    model: Bag,
+                    as: 'bag',
+                    attributes: ['id', 'color', 'capacity']
+                }
+            ]
+        });
         res.json(data);
     }
 
@@ -44,14 +52,46 @@ class CharacterController {
 
     update = async (req, res) => {
         const id = req.params.id;
-        const char = await Character.findByPk(id);
-        const updated_character = {
-            name : req.body.name || char.name,
-            xp : req.body.xp || char.xp,
-            pv :req.body.pv || char.pv
+        let char = await Character.findByPk(id, {
+            include: [{
+                model: Bag,
+                as: 'bag'
+            }]
+        })
+        if(!char) {
+            res.status(404).send('Pas de personnage trouvé avec cet ID')
+        } else {
+            const updated_character = {
+                name : req.body.name || char.name,
+                xp : req.body.xp || char.xp,
+                pv :req.body.pv || char.pv,
+            }
+
+
+                const bag = {color: 'Brown', capacity: 5, characterId: char.id};
+                // Soit on en récupère un via le body
+                if(req.body.bag) {
+                    bag.color = req.body.bag.color || bag.color;
+                    bag.capacity = req.body.bag.capacity || bag.capacity;
+                }
+            // Si le personnage en base n'a pas de sac, il faut en créer un
+            let new_bag;
+            if(!char.bag) {
+                new_bag = await Bag.create(bag);
+
+            } else {
+                new_bag = await Bag.update(bag, {where: {characterId: char.id}});
+            }
+            updated_character.bag = new_bag;
+
+            const data = await Character.update(updated_character, {
+                where: {id: id},
+                include: [{ model: Bag, as: 'bag'}]
+            });
+            res.json(data);
         }
-        const data = await Character.update(updated_character, { where: {id: id}});
-        res.json(data);
+
+
     }
 
     delete = async (req, res) => {
