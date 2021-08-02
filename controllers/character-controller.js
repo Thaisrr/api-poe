@@ -67,7 +67,6 @@ class CharacterController {
                 pv :req.body.pv || char.pv,
             }
 
-
                 const bag = {color: 'Brown', capacity: 5, characterId: char.id};
                 // Soit on en récupère un via le body
                 if(req.body.bag) {
@@ -97,7 +96,8 @@ class CharacterController {
     delete = async (req, res) => {
         const id = req.params.id;
         const data = await Character.destroy({
-            where: {id: id}
+            where: {id: id},
+            include: [{model: Bag, as: 'bag'}]
         });
         res.json(data);
     }
