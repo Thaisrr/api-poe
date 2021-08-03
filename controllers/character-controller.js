@@ -117,16 +117,17 @@ class CharacterController {
                     }
                     // vérifier si les armes de body ont un Id
                     // Si elles ont un id et qu'elles existent dans le character -> on modifie
-                    if(weapon.id && char.weapons && char.weapons.includes(cw => cw.id === weapon.id)) {
-                       new_weapon = await Weapon.update(new_weapon, {where: {id: weapon.id}})
+                    if(weapon.id && char.weapons && char.weapons.findIndex(cw => cw.id === weapon.id) !== -1) {
+                        console.log('in update')
+                       await Weapon.update(new_weapon, {where: {id: weapon.id}})
                     } else {
                         new_weapon.characterId = char.id;
-                        new_weapon = await Weapon.create(new_weapon);
+                        await Weapon.create(new_weapon);
                     }
 
                     // Sinon -> on la créé
 
-                    updated_character.weapons.push(new_weapon)
+                    //updated_character.weapons.push(new_weapon)
                 }));
             }
 
