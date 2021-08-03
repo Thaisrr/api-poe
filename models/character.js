@@ -24,6 +24,13 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: 'CASCADE' // ???
       })
 
+      Character.belongsToMany(models.Job, {
+        through: 'Characters_Jobs', // Nom de la table intermédiaire
+        foreignKey: 'characterId', // référence à lui même dans la table intermédiaire
+        otherKey: 'jobId', // référence de la table associée
+        as: 'jobs' // alias dans Character
+      })
+
 
     }
   };

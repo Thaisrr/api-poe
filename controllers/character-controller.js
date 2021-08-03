@@ -2,6 +2,7 @@ const db = require('../models');
 const Character = db.Character;
 const Bag = db.Bag;
 const Weapon = db.Weapon;
+const Job = db.Job;
 
 class CharacterController {
 
@@ -18,6 +19,12 @@ class CharacterController {
                         model: Weapon,
                         as: 'weapons',
                         attributes: ['name', 'attack']
+                    },
+                    {
+                        model: Job,
+                        as: 'jobs', // Même alias que défini dans la model Character
+                        through: 'Characters_Jobs', // Attention à l'orthographe de la table
+                        attributes: ['name', 'defense']
                     }
                 ]
             }
@@ -38,6 +45,12 @@ class CharacterController {
                     model: Weapon,
                     as: 'weapons',
                     attributes: ['id', 'name', 'attack']
+                },
+                {
+                    model: Job,
+                    as: 'jobs', // Même alias que défini dans la model Character
+                    through: 'Characters_Jobs', // Attention à l'orthographe de la table
+                    attributes: ['id', 'name', 'defense']
                 }
             ]
         });
@@ -53,7 +66,8 @@ class CharacterController {
                 color: req.body.bag.color || 'Brown',
                 capacity: req.body.bag.capacity || 5
             },
-            weapons: []
+            weapons: [],
+            jobs: []
         }
 
         if(req.body.weapons) {
@@ -65,13 +79,37 @@ class CharacterController {
                 new_character.weapons.push(new_weapon)
             })
         }
-
-        const data = await Character.create(new_character, {
+        let data = await Character.create(new_character, {
             include: [
                 { model: Bag, as: 'bag'},
-                { model: Weapon, as: 'weapons'}
+                { model: Weapon, as: 'weapons'},
             ]
         });
+
+        if(req.body.jobs) {
+            await Promise.all(req.body.jobs.map(async (job) => {
+                let new_job;
+                if(job.id) {
+                    new_job = await Job.findByPk(job.id, {
+                        include: [{model: Character, as: 'characters', through: 'Characters_Jobs'}]
+                    })
+                }
+                if(!new_job) {
+                    new_job = {
+                        name: job.name || 'Aventurier·e',
+                        defense: job.defense || 5,
+                    }
+                    await Job.create(new_job);
+
+                } else {
+                    // Le job existe déjà dans la base
+                    new_job.characters.push(new_character);
+                }
+                new_character.jobs.push(new_job)
+            }))
+        }
+
+
         res.json(data);
     }
 
