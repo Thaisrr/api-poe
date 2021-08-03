@@ -118,7 +118,6 @@ class CharacterController {
                     // vérifier si les armes de body ont un Id
                     // Si elles ont un id et qu'elles existent dans le character -> on modifie
                     if(weapon.id && char.weapons && char.weapons.findIndex(cw => cw.id === weapon.id) !== -1) {
-                        console.log('in update')
                        await Weapon.update(new_weapon, {where: {id: weapon.id}})
                     } else {
                         new_weapon.characterId = char.id;
@@ -146,11 +145,19 @@ class CharacterController {
             where: {id: id},
             include: [
                 {model: Bag, as: 'bag'},
-                {model: Weapon, as: 'weapon'}
+                {model: Weapon, as: 'weapons'}
             ]
         });
         res.json(data);
     }
+
+    // Méthode pour modifier les armes
+
+    // Méthode + légère spécialisée dans l'ajout d'arme
+
+    // findAll, findByPk, findOne( where ), count destroy, update, create...
+    // Pour faire un join : on utilise include
+
 }
 
 module.exports = new CharacterController();

@@ -18,6 +18,7 @@ app.put('/character/:id', CharacterController.update);
 app.delete('/character/:id', CharacterController.delete);
 
 
+
 app.listen(port, () => {
     console.log('Server is running on port ', port);
 });
