@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": "CaputDraconis",
+    "password": null,
     "database": "api-poe-front",
     "host": "127.0.0.1",
     "dialect": "mysql"
