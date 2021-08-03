@@ -67,17 +67,16 @@ class CharacterController {
                 pv :req.body.pv || char.pv,
             }
 
-                const bag = {color: 'Brown', capacity: 5, characterId: char.id};
+            const bag = {color: 'Brown', capacity: 5, characterId: char.id};
                 // Soit on en récupère un via le body
-                if(req.body.bag) {
-                    bag.color = req.body.bag.color || bag.color;
-                    bag.capacity = req.body.bag.capacity || bag.capacity;
-                }
+            if(req.body.bag) {
+                bag.color = req.body.bag.color || bag.color;
+                bag.capacity = req.body.bag.capacity || bag.capacity;
+            }
             // Si le personnage en base n'a pas de sac, il faut en créer un
             let new_bag;
             if(!char.bag) {
                 new_bag = await Bag.create(bag);
-
             } else {
                 new_bag = await Bag.update(bag, {where: {characterId: char.id}});
             }
@@ -85,12 +84,10 @@ class CharacterController {
 
             const data = await Character.update(updated_character, {
                 where: {id: id},
-                include: [{ model: Bag, as: 'bag'}]
+                include: [{ model: Bag, as: 'bag'}] // <-- Pourquoi ça marche pas ??
             });
             res.json(data);
         }
-
-
     }
 
     delete = async (req, res) => {

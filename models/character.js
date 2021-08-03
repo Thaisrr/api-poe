@@ -15,7 +15,13 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'characterId',
         as: 'bag',
         onDelete: 'CASCADE',
-        onUpdate: 'CASCADE'
+        onUpdate: 'CASCADE' // ??
+      })
+      Character.hasMany(models.Weapon, {
+        foreignKey: 'characterId',
+        as: 'weapons',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE' // ???
       })
 
 
